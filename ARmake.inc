@@ -8,131 +8,67 @@
 #
 #  Creation date:   February 22, 1996
 #
-#  Modified:
-#
 #  Send bug reports, comments or suggestions to arpack@caam.rice.edu
 #
 ############################################################################
 #
-# %---------------------------------%
-# |  SECTION 1: PATHS AND LIBRARIES |
-# %---------------------------------%
+#  ARPACK build directory.
 #
+ARPACKdir    = $(HOME)/arpack
 #
-# %--------------------------------------%
-# | You should change the definition of  |
-# | home if ARPACK is built some place   | 
-# | other than your home directory.      |
-# %--------------------------------------%
+#  The communication library ( need for parallel library only ).
+#  Current availible platforms are: BLACS or MPI.
 #
-home = $(HOME)/ARPACK
+COMMLIB      = MPI
 #
-#  %--------------------------------------%
-#  | The platform identifier to suffix to |
-#  | the end of library names             |
-#  %--------------------------------------%
+#  The directories to find the various pieces of ARPACK.
 #
-PLAT = SUN4
+BLASdir      = $(ARPACKdir)/BLAS
+LAPACKdir    = $(ARPACKdir)/LAPACK
+UTILdir      = $(ARPACKdir)/UTIL
+SRCdir       = $(ARPACKdir)/SRC
+PUTILdir     = $(ARPACKdir)/PARPACK/UTIL/$(COMMLIB)
+PSRCdir      = $(ARPACKdir)/PARPACK/SRC/$(COMMLIB)
 #
-#  %------------------------------------------------------%
-#  | The directories to find the various pieces of ARPACK |
-#  %------------------------------------------------------%
+DIRS         = $(BLASdir) $(LAPACKdir) $(UTILdir) $(SRCdir)
 #
-BLASdir      = $(home)/BLAS
-LAPACKdir    = $(home)/LAPACK
-UTILdir      = $(home)/UTIL
-SRCdir       = $(home)/SRC
+#  The name of the libraries to be created/linked to.
 #
-DIRS        = $(BLASdir) $(LAPACKdir) $(UTILdir) $(SRCdir)
+ARPACKLIB    = $(ARPACKdir)/libarpack.a
+PARPACKLIB   = $(ARPACKdir)/libparpack.a
 #
-# %-------------------------------------------------------------------%
-# | Comment out the previous line and uncomment the following         |
-# | if you already have the BLAS and LAPACK installed on your system. |
-# | NOTE: ARPACK assumes the use of LAPACK version 2 codes.           |
-# %-------------------------------------------------------------------%
+ALIBS        = $(ARPACKLIB)
 #
-#DIRS         = $(UTILdir) $(SRCdir)
-#
-# %---------------------------------------------------%
-# | The name of the libraries to be created/linked to |
-# %---------------------------------------------------%
-#
-ARPACKLIB  = $(home)/libarpack_$(PLAT).a
-LAPACKLIB = 
-BLASLIB = 
-#
-ALIBS =  $(ARPACKLIB) $(LAPACKLIB) $(BLASLIB) 
-#
-# 
-# %---------------------------------------------------------%
-# |                  SECTION 2: COMPILERS                   |
-# |                                                         |
-# | The following macros specify compilers, linker/loaders, |
-# | the archiver, and their options.  You need to make sure |
-# | these are correct for your system.                      |
-# %---------------------------------------------------------%
-#
-#
-# %------------------------------%
-# | Make our own suffixes' list. |
-# %------------------------------%
-#
-.SUFFIXES:
-.SUFFIXES:	.f	.o
-#
-# %------------------%
-# | Default command. |
-# %------------------%
+# Default command.
 #
 .DEFAULT:
 	@$(ECHO) "Unknown target $@, try:  make help"
 #
-# %-------------------------------------------%
-# |  Command to build .o files from .f files. |
-# %-------------------------------------------%
+#  Various compilation programs and flags.
+#  You need to make sure these are correct
+#  for your system.
 #
-.f.o:
-	@$(ECHO) Making $@ from $<
-	@$(FC) -c $(FFLAGS) $<
+FC           = f77
+FFLAGS	     = -fpic
 #
-# %-----------------------------------------%
-# | Various compilation programs and flags. |
-# | You need to make sure these are correct |
-# | for your system.                        |
-# %-----------------------------------------%
+PFC          = mpif77
+PFFLAGS      = -fpic
 #
-FC      = f77
-FFLAGS	= -O -cg89
-
-LDFLAGS = 
-CD      = cd
-
-ECHO    = echo
-
-LN      = ln
-LNFLAGS = -s
-
-MAKE    = /bin/make
-
-RM      = rm
-RMFLAGS = -f
-
-SHELL   = /bin/sh
+LDFLAGS      =
 #
-#  %----------------------------------------------------------------%
-#  | The archiver and the flag(s) to use when building an archive   |
-#  | (library).  Also the ranlib routine.  If your system has no    |
-#  | ranlib, set RANLIB = touch.                                    |
-#  %----------------------------------------------------------------%
+CD	     = cd
+ECHO         = echo
+MAKE         = make
 #
-AR = ar 
-ARFLAGS = rv
-#RANLIB  = touch
-RANLIB   = ranlib
+#   The archiver and the flag(s) to use when building an archive
+#   (library).  Also the ranlib routine.  If your system has no
+#   ranlib, set RANLIB = touch.
 #
-# %----------------------------------%
-# | This is the general help target. |
-# %----------------------------------%
+AR           = ar
+ARFLAGS      = rv
+RANLIB       = ranlib
+#
+#  This is the general help target.
 #
 help:
 	@$(ECHO) "usage: make ?"
