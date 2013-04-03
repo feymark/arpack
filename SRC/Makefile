@@ -68,13 +68,13 @@ complex16: $(ZOBJ)
 	$(RANLIB) $(ARPACKLIB)
 #
 sdrv:
-	
+
 ddrv:
-	
+
 cdrv:
-	
+
 zdrv:
-	
+
 #
 #  clean	- remove all object files
 #

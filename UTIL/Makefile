@@ -15,9 +15,9 @@
 ############################################################################
 #\SCCS Information: @(#)
 # FILE: Makefile   SID: 2.1   DATE OF SID: 9/9/96   RELEASE: 2
- 
+
 include ../ARmake.inc
- 
+
 ############################################################################
 #  To create or add to the library, enter make followed by one or
 #  more of the precisions desired.  Some examples:
@@ -37,7 +37,7 @@ SOBJ  = svout.o  smout.o
 
 DOBJ  = dvout.o  dmout.o
 
-COBJ  = cvout.o  cmout.o 
+COBJ  = cvout.o  cmout.o
 
 ZOBJ  = zvout.o  zmout.o
 
@@ -49,11 +49,11 @@ ZOBJ  = zvout.o  zmout.o
 #  make the library containing both single and double precision
 #
 all: single double complex complex16
- 
+
 single: $(SOBJ) $(OBJS)
 	$(AR) $(ARFLAGS) $(ARPACKLIB) $(SOBJ) $(OBJS)
 	$(RANLIB) $(ARPACKLIB)
- 
+
 double: $(DOBJ) $(OBJS) $(ZOBJ)
 	$(AR) $(ARFLAGS) $(ARPACKLIB) $(DOBJ) $(OBJS)
 	$(RANLIB) $(ARPACKLIB)
@@ -67,13 +67,13 @@ complex16: $(DOBJ) $(OBJS) $(ZOBJ)
 	$(RANLIB) $(ARPACKLIB)
 #
 sdrv:
-	
+
 ddrv:
-	
+
 cdrv:
-	
+
 zdrv:
-	
+
 #
 #  clean	- remove all object files
 #
