@@ -53,10 +53,3 @@
               SHIFT-INVERT mode using mode 4 of [d,s]naupd.f.
        Note: the imaginary part of the shift MUST be nonzero when
        these two drivers are used.
-
-3. Usage
-   -----
-   To run these drivers, you may use the makefile in this
-   directory and issue, for example, "make snbdr1".  Then
-   execute using "snbdr1".
- 

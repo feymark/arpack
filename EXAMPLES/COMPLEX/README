@@ -28,9 +28,3 @@
 
    For shift-invert modes (N=2,4), the user needs to provide a complex
    linear system solver to perform y=inv[A-sigma*B]*x.
-
-3. Usage
-   -----
-   To run these drivers, you may use the makefile in this
-   directory and issue, for example, "make cndrv1".  Then
-   execute using "cndrv1".

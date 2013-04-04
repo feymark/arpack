@@ -25,11 +25,9 @@
    to go into the subdirectory SIMPLE, and read one of the
    simple drivers [s,d]ssimp.f, [s,d]nsimp.f [c,z]nsimp.f
    first.  The documentation explains how to use ARPACK in 
-   considerable detail.  To run these drivers, you may use the 
-   makefile in that directory and issue, for example, 
-   "make sssimp", and then execute using "sssimp"
+   considerable detail.
 
-   The output should look like: 
+   The output from "sssimp" should look like: 
 
    _saupd: number of update iterations taken
    -----------------------------------------

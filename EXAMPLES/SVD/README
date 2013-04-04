@@ -10,9 +10,3 @@
    The name for each driver has the form 'Xsvd.f', where
    X - is 's' (single precision)
        or 'd' (double precision)
-
-3. Usage
-   -----
-   To run these drivers, you may use the makefile in this
-   directory and issue, for example, "make ssvd".  Then
-   execute using "ssvd".    
