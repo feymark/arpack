@@ -3,7 +3,9 @@ project(arpack)
 
 enable_language(Fortran)
 
-option(WITH_MPI "Enable parallel support" OFF)
+option(MPI "Enable parallel support" OFF)
+option(SYSTEM_BLAS "Use system BLAS" OFF)
+option(SYSTEM_LAPACK "Use system LAPACK" OFF)
 
 function(prefixlist list_name prefix)
     set(${list_name}_TMP)
@@ -13,7 +15,15 @@ function(prefixlist list_name prefix)
     set(${list_name} "${${list_name}_TMP}" PARENT_SCOPE)
 endfunction(prefixlist)
 
-if (WITH_MPI)
+if (SYSTEM_BLAS)
+    find_package(BLAS REQUIRED)
+endif()
+
+if (SYSTEM_LAPACK)
+    find_package(LAPACK REQUIRED)
+endif()
+
+if (MPI)
     include(FindMPI)
     find_package(MPI REQUIRED)
     include_directories(${MPI_Fortran_INCLUDE_PATH})
@@ -25,255 +35,259 @@ set(arpacklapack_DIR ${arpack_SOURCE_DIR}/LAPACK/)
 set(arpackutil_DIR ${arpack_SOURCE_DIR}/UTIL/)
 set(arpacksrc_DIR ${arpack_SOURCE_DIR}/SRC/)
 
-if (WITH_MPI)
-    set(parpackutil_DIR ${arpack_SOURCE_DIR}/PARPACK/UTIL/MPI/)
-    set(parpacksrc_DIR ${arpack_SOURCE_DIR}/PARPACK/SRC/MPI/)
+if (MPI)
+    set(parpackutil_DIR ${arpack_SOURCE_DIR}/PARPACK/UTIL/)
+    set(parpacksrc_DIR ${arpack_SOURCE_DIR}/PARPACK/SRC/)
 endif()
 
-set(arpackblas_STAT_SRCS
-    caxpy.f
-    ccopy.f
-    cdotc.f
-    cdotu.f
-    cgbmv.f
-    cgemm.f
-    cgemv.f
-    cgerc.f
-    cgeru.f
-    cscal.f
-    csscal.f
-    cswap.f
-    ctbsv.f
-    ctrmm.f
-    ctrsm.f
-    ctrsv.f
-    dasum.f
-    daxpy.f
-    dcopy.f
-    ddot.f
-    dgbmv.f
-    dgemm.f
-    dgemv.f
-    dger.f
-    dnrm2.f
-    drot.f
-    drotg.f
-    dscal.f
-    dswap.f
-    dsymv.f
-    dsyr2.f
-    dtbsv.f
-    dtrmm.f
-    dtrsm.f
-    dzasum.f
-    dznrm2.f
-    icamax.f
-    idamax.f
-    isamax.f
-    izamax.f
-    sasum.f
-    saxpy.f
-    scasum.f
-    scnrm2.f
-    scopy.f
-    sdot.f
-    sgbmv.f
-    sgemm.f
-    sgemv.f
-    sger.f
-    snrm2.f
-    srot.f
-    srotg.f
-    sscal.f
-    sswap.f
-    ssymv.f
-    ssyr2.f
-    stbsv.f
-    strmm.f
-    strsm.f
-    zaxpy.f
-    zcopy.f
-    zdotc.f
-    zdotu.f
-    zdscal.f
-    zgbmv.f
-    zgemm.f
-    zgemv.f
-    zgerc.f
-    zgeru.f
-    zscal.f
-    zswap.f
-    ztbsv.f
-    ztrmm.f
-    ztrsm.f
-    ztrsv.f)
+if (NOT SYSTEM_BLAS)
+    set(arpackblas_STAT_SRCS
+        caxpy.f
+	ccopy.f
+	cdotc.f
+	cdotu.f
+	cgbmv.f
+	cgemm.f
+	cgemv.f
+	cgerc.f
+	cgeru.f
+	cscal.f
+	csscal.f
+	cswap.f
+	ctbsv.f
+	ctrmm.f
+	ctrsm.f
+	ctrsv.f
+	dasum.f
+	daxpy.f
+	dcopy.f
+	ddot.f
+	dgbmv.f
+	dgemm.f
+	dgemv.f
+	dger.f
+	dnrm2.f
+	drot.f
+	drotg.f
+	dscal.f
+	dswap.f
+	dsymv.f
+	dsyr2.f
+	dtbsv.f
+	dtrmm.f
+	dtrsm.f
+	dzasum.f
+	dznrm2.f
+	icamax.f
+	idamax.f
+	isamax.f
+	izamax.f
+	sasum.f
+	saxpy.f
+	scasum.f
+	scnrm2.f
+	scopy.f
+	sdot.f
+	sgbmv.f
+	sgemm.f
+	sgemv.f
+	sger.f
+	snrm2.f
+	srot.f
+	srotg.f
+	sscal.f
+	sswap.f
+	ssymv.f
+	ssyr2.f
+	stbsv.f
+	strmm.f
+	strsm.f
+	zaxpy.f
+	zcopy.f
+	zdotc.f
+	zdotu.f
+	zdscal.f
+	zgbmv.f
+	zgemm.f
+	zgemv.f
+	zgerc.f
+	zgeru.f
+	zscal.f
+	zswap.f
+	ztbsv.f
+	ztrmm.f
+	ztrsm.f
+	ztrsv.f)
 
-prefixlist(arpackblas_STAT_SRCS "${arpackblas_DIR}")
+    prefixlist(arpackblas_STAT_SRCS "${arpackblas_DIR}")
+endif()
 
-set(arpacklapack_STAT_SRCS
-    cgbtf2.f
-    clanhs.f
-    ctrevc.f
-    dlacon.f
-    dlanst.f
-    dlaruv.f
-    dtrevc.f
-    sgbtf2.f
-    slaexc.f
-    slaran.f
-    slassq.f
-    xlaenv.f
-    zlahqr.f
-    zmach.f
-    cgbtrf.f
-    clarf.f
-    ctrexc.f
-    dlacpy.f
-    dlanv2.f
-    dlascl.f
-    dtrexc.f
-    sgbtrf.f
-    slagtm.f
-    slarf.f
-    slaswp.f
-    zlange.f
-    zrot.f
-    cgbtrs.f
-    clarfg.f
-    ctrsen.f
-    dladiv.f
-    dlaptm.f
-    dlaset.f
-    dtrsen.f
-    sgbtrs.f
-    slahqr.f
-    slarfg.f
-    slasy2.f
-    zgbtf2.f
-    zlanhs.f
-    ztrevc.f
-    cgeqr2.f
-    clarnv.f
-    ctrsyl.f
-    dlae2.f
-    dlapy2.f
-    dlasr.f
-    dtrsyl.f
-    sgeqr2.f
-    slaln2.f
-    slarfx.f
-    sorm2r.f
-    zgbtrf.f
-    zlarf.f
-    ztrexc.f
-    cgttrf.f
-    clartg.f
-    cunm2r.f
-    dlaev2.f
-    dlapy3.f
-    dlasrt.f
-    dzsum1.f
-    sgttrf.f
-    slamch.f
-    slarnd.f
-    spttrf.f
-    zgbtrs.f
-    zlarfg.f
-    ztrsen.f
-    cgttrs.f
-    clascl.f
-    dgbtf2.f
-    dlaexc.f
-    dlaran.f
-    dlassq.f
-    icmax1.f
-    sgttrs.f
-    slange.f
-    slarnv.f
-    spttrs.f
-    zgeqr2.f
-    zlarnv.f
-    ztrsyl.f
-    clacgv.f
-    claset.f
-    dgbtrf.f
-    dlagtm.f
-    dlarf.f
-    dlaswp.f
-    ilaenv.f
-    slabad.f
-    slanhs.f
-    slartg.f
-    ssteqr.f
-    zgttrf.f
-    zlartg.f
-    zunm2r.f
-    clacon.f
-    classq.f
-    dgbtrs.f
-    dlahqr.f
-    dlarfg.f
-    dlasy2.f
-    izmax1.f
-    slacon.f
-    slanst.f
-    slaruv.f
-    strevc.f
-    zgttrs.f
-    zlascl.f
-    clacpy.f
-    claswp.f
-    dgeqr2.f
-    dlaln2.f
-    dlarfx.f
-    dorm2r.f
-    lsame.f
-    slacpy.f
-    slanv2.f
-    slascl.f
-    strexc.f
-    zlacgv.f
-    zlaset.f
-    cladiv.f
-    clatrs.f
-    dgttrf.f
-    dlamch.f
-    dlarnd.f
-    dpttrf.f
-    lsamen.f
-    sladiv.f
-    slaptm.f
-    slaset.f
-    strsen.f
-    zlacon.f
-    zlassq.f
-    clahqr.f
-    cmach.f
-    dgttrs.f
-    dlange.f
-    dlarnv.f
-    dpttrs.f
-    slae2.f
-    slapy2.f
-    slasr.f
-    strsyl.f
-    zlacpy.f
-    zlaswp.f
-    clange.f
-    crot.f
-    dlabad.f
-    dlanhs.f
-    dlartg.f
-    dsteqr.f
-    scsum1.f
-    slaev2.f
-    slapy3.f
-    slasrt.f
-    xerbla.f
-    zladiv.f
-    zlatrs.f)
+if (NOT SYSTEM_LAPACK)
+    set(arpacklapack_STAT_SRCS
+        cgbtf2.f
+	clanhs.f
+	ctrevc.f
+	dlacon.f
+	dlanst.f
+	dlaruv.f
+	dtrevc.f
+	sgbtf2.f
+	slaexc.f
+	slaran.f
+	slassq.f
+	xlaenv.f
+	zlahqr.f
+	zmach.f
+	cgbtrf.f
+	clarf.f
+	ctrexc.f
+	dlacpy.f
+	dlanv2.f
+	dlascl.f
+	dtrexc.f
+	sgbtrf.f
+	slagtm.f
+	slarf.f
+	slaswp.f
+	zlange.f
+	zrot.f
+	cgbtrs.f
+	clarfg.f
+	ctrsen.f
+	dladiv.f
+	dlaptm.f
+	dlaset.f
+	dtrsen.f
+	sgbtrs.f
+	slahqr.f
+	slarfg.f
+	slasy2.f
+	zgbtf2.f
+	zlanhs.f
+	ztrevc.f
+	cgeqr2.f
+	clarnv.f
+	ctrsyl.f
+	dlae2.f
+	dlapy2.f
+	dlasr.f
+	dtrsyl.f
+	sgeqr2.f
+	slaln2.f
+	slarfx.f
+	sorm2r.f
+	zgbtrf.f
+	zlarf.f
+	ztrexc.f
+	cgttrf.f
+	clartg.f
+	cunm2r.f
+	dlaev2.f
+	dlapy3.f
+	dlasrt.f
+	dzsum1.f
+	sgttrf.f
+	slamch.f
+	slarnd.f
+	spttrf.f
+	zgbtrs.f
+	zlarfg.f
+	ztrsen.f
+	cgttrs.f
+	clascl.f
+	dgbtf2.f
+	dlaexc.f
+	dlaran.f
+	dlassq.f
+	icmax1.f
+	sgttrs.f
+	slange.f
+	slarnv.f
+	spttrs.f
+	zgeqr2.f
+	zlarnv.f
+	ztrsyl.f
+	clacgv.f
+	claset.f
+	dgbtrf.f
+	dlagtm.f
+	dlarf.f
+	dlaswp.f
+	ilaenv.f
+	slabad.f
+	slanhs.f
+	slartg.f
+	ssteqr.f
+	zgttrf.f
+	zlartg.f
+	zunm2r.f
+	clacon.f
+	classq.f
+	dgbtrs.f
+	dlahqr.f
+	dlarfg.f
+	dlasy2.f
+	izmax1.f
+	slacon.f
+	slanst.f
+	slaruv.f
+	strevc.f
+	zgttrs.f
+	zlascl.f
+	clacpy.f
+	claswp.f
+	dgeqr2.f
+	dlaln2.f
+	dlarfx.f
+	dorm2r.f
+	lsame.f
+	slacpy.f
+	slanv2.f
+	slascl.f
+	strexc.f
+	zlacgv.f
+	zlaset.f
+	cladiv.f
+	clatrs.f
+	dgttrf.f
+	dlamch.f
+	dlarnd.f
+	dpttrf.f
+	lsamen.f
+	sladiv.f
+	slaptm.f
+	slaset.f
+	strsen.f
+	zlacon.f
+	zlassq.f
+	clahqr.f
+	cmach.f
+	dgttrs.f
+	dlange.f
+	dlarnv.f
+	dpttrs.f
+	slae2.f
+	slapy2.f
+	slasr.f
+	strsyl.f
+	zlacpy.f
+	zlaswp.f
+	clange.f
+	crot.f
+	dlabad.f
+	dlanhs.f
+	dlartg.f
+	dsteqr.f
+	scsum1.f
+	slaev2.f
+	slapy3.f
+	slasrt.f
+	xerbla.f
+	zladiv.f
+	zlatrs.f)
 
-prefixlist(arpacklapack_STAT_SRCS "${arpacklapack_DIR}")
+    prefixlist(arpacklapack_STAT_SRCS "${arpacklapack_DIR}")
+endif()
 
 set(arpackutil_STAT_SRCS
     icnteq.f
@@ -364,7 +378,7 @@ set(arpacksrc_STAT_SRCS
 
 prefixlist(arpacksrc_STAT_SRCS "${arpacksrc_DIR}")
 
-if (WITH_MPI)
+if (MPI)
     set(parpackutil_STAT_SRCS
         pcmout.f
 	pcvout.f
@@ -439,18 +453,25 @@ if (WITH_MPI)
 	stat.h)
 
     prefixlist(parpacksrc_STAT_SRCS "${parpacksrc_DIR}")
-
 endif()
 
 add_library(arpack SHARED
 		   ${arpackblas_STAT_SRCS}
-		   ${arpacklapack_STAT_SRCS}
+    		   ${arpacklapack_STAT_SRCS}
 		   ${arpackutil_STAT_SRCS}
 		   ${arpacksrc_STAT_SRCS})
 
+if (SYSTEM_BLAS)
+    target_link_libraries(arpack ${BLAS_LIBRARIES})
+endif()
+
+if (SYSTEM_LAPACK)
+    target_link_libraries(arpack ${LAPACK_LIBRARIES})
+endif()
+
 set_target_properties(arpack PROPERTIES OUTPUT_NAME arpack)
 
-if (WITH_MPI)
+if (MPI)
     add_library(parpack SHARED
 		   	${parpacksrc_STAT_SRCS}
 		   	${parpackutil_STAT_SRCS})
