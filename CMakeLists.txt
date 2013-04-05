@@ -6,6 +6,9 @@ enable_language(Fortran)
 option(MPI "Enable parallel support" OFF)
 option(SYSTEM_BLAS "Use system BLAS" OFF)
 option(SYSTEM_LAPACK "Use system LAPACK" OFF)
+option(EXAMPLES "Compile ARPACK examples" OFF)
+
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 function(prefixlist list_name prefix)
     set(${list_name}_TMP)
@@ -15,12 +18,24 @@ function(prefixlist list_name prefix)
     set(${list_name} "${${list_name}_TMP}" PARENT_SCOPE)
 endfunction(prefixlist)
 
+function(examples list_name)
+    foreach(l ${${list_name}})
+        get_filename_component(lwe ${l} NAME_WE)
+        add_executable(${lwe} ${arpackexample_DIR}/${l} ${examples_EXTRA_SRCS})
+        target_link_libraries(${lwe} arpack ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+    endforeach()
+endfunction(examples)
+
+function(pexamples list_name)
+    foreach(l ${${list_name}})
+        get_filename_component(lwe ${l} NAME_WE)
+        add_executable(${lwe} ${parpackexample_DIR}/${l} )
+        target_link_libraries(${lwe} arpack parpack ${MPI_Fortran_LIBRARIES})
+    endforeach()
+endfunction(pexamples)
+
 if (SYSTEM_BLAS)
     find_package(BLAS REQUIRED)
-endif()
-
-if (SYSTEM_LAPACK)
-    find_package(LAPACK REQUIRED)
 endif()
 
 if (MPI)
@@ -30,10 +45,9 @@ if (MPI)
     set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${MPI_Fortran_COMPILE_FLAG}")
 endif()
 
-set(arpackblas_DIR ${arpack_SOURCE_DIR}/BLAS/)
-set(arpacklapack_DIR ${arpack_SOURCE_DIR}/LAPACK/)
-set(arpackutil_DIR ${arpack_SOURCE_DIR}/UTIL/)
-set(arpacksrc_DIR ${arpack_SOURCE_DIR}/SRC/)
+if (SYSTEM_LAPACK)
+    find_package(LAPACK REQUIRED)
+endif()
 
 if (MPI)
     set(parpackutil_DIR ${arpack_SOURCE_DIR}/PARPACK/UTIL/)
@@ -41,439 +55,209 @@ if (MPI)
 endif()
 
 if (NOT SYSTEM_BLAS)
-    set(arpackblas_STAT_SRCS
-        caxpy.f
-	ccopy.f
-	cdotc.f
-	cdotu.f
-	cgbmv.f
-	cgemm.f
-	cgemv.f
-	cgerc.f
-	cgeru.f
-	cscal.f
-	csscal.f
-	cswap.f
-	ctbsv.f
-	ctrmm.f
-	ctrsm.f
-	ctrsv.f
-	dasum.f
-	daxpy.f
-	dcopy.f
-	ddot.f
-	dgbmv.f
-	dgemm.f
-	dgemv.f
-	dger.f
-	dnrm2.f
-	drot.f
-	drotg.f
-	dscal.f
-	dswap.f
-	dsymv.f
-	dsyr2.f
-	dtbsv.f
-	dtrmm.f
-	dtrsm.f
-	dzasum.f
-	dznrm2.f
-	icamax.f
-	idamax.f
-	isamax.f
-	izamax.f
-	sasum.f
-	saxpy.f
-	scasum.f
-	scnrm2.f
-	scopy.f
-	sdot.f
-	sgbmv.f
-	sgemm.f
-	sgemv.f
-	sger.f
-	snrm2.f
-	srot.f
-	srotg.f
-	sscal.f
-	sswap.f
-	ssymv.f
-	ssyr2.f
-	stbsv.f
-	strmm.f
-	strsm.f
-	zaxpy.f
-	zcopy.f
-	zdotc.f
-	zdotu.f
-	zdscal.f
-	zgbmv.f
-	zgemm.f
-	zgemv.f
-	zgerc.f
-	zgeru.f
-	zscal.f
-	zswap.f
-	ztbsv.f
-	ztrmm.f
-	ztrsm.f
-	ztrsv.f)
-
-    prefixlist(arpackblas_STAT_SRCS "${arpackblas_DIR}")
+    file(GLOB arpackblas_STAT_SRCS BLAS/*.f)
 endif()
-
 if (NOT SYSTEM_LAPACK)
-    set(arpacklapack_STAT_SRCS
-        cgbtf2.f
-	clanhs.f
-	ctrevc.f
-	dlacon.f
-	dlanst.f
-	dlaruv.f
-	dtrevc.f
-	sgbtf2.f
-	slaexc.f
-	slaran.f
-	slassq.f
-	xlaenv.f
-	zlahqr.f
-	zmach.f
-	cgbtrf.f
-	clarf.f
-	ctrexc.f
-	dlacpy.f
-	dlanv2.f
-	dlascl.f
-	dtrexc.f
-	sgbtrf.f
-	slagtm.f
-	slarf.f
-	slaswp.f
-	zlange.f
-	zrot.f
-	cgbtrs.f
-	clarfg.f
-	ctrsen.f
-	dladiv.f
-	dlaptm.f
-	dlaset.f
-	dtrsen.f
-	sgbtrs.f
-	slahqr.f
-	slarfg.f
-	slasy2.f
-	zgbtf2.f
-	zlanhs.f
-	ztrevc.f
-	cgeqr2.f
-	clarnv.f
-	ctrsyl.f
-	dlae2.f
-	dlapy2.f
-	dlasr.f
-	dtrsyl.f
-	sgeqr2.f
-	slaln2.f
-	slarfx.f
-	sorm2r.f
-	zgbtrf.f
-	zlarf.f
-	ztrexc.f
-	cgttrf.f
-	clartg.f
-	cunm2r.f
-	dlaev2.f
-	dlapy3.f
-	dlasrt.f
-	dzsum1.f
-	sgttrf.f
-	slamch.f
-	slarnd.f
-	spttrf.f
-	zgbtrs.f
-	zlarfg.f
-	ztrsen.f
-	cgttrs.f
-	clascl.f
-	dgbtf2.f
-	dlaexc.f
-	dlaran.f
-	dlassq.f
-	icmax1.f
-	sgttrs.f
-	slange.f
-	slarnv.f
-	spttrs.f
-	zgeqr2.f
-	zlarnv.f
-	ztrsyl.f
-	clacgv.f
-	claset.f
-	dgbtrf.f
-	dlagtm.f
-	dlarf.f
-	dlaswp.f
-	ilaenv.f
-	slabad.f
-	slanhs.f
-	slartg.f
-	ssteqr.f
-	zgttrf.f
-	zlartg.f
-	zunm2r.f
-	clacon.f
-	classq.f
-	dgbtrs.f
-	dlahqr.f
-	dlarfg.f
-	dlasy2.f
-	izmax1.f
-	slacon.f
-	slanst.f
-	slaruv.f
-	strevc.f
-	zgttrs.f
-	zlascl.f
-	clacpy.f
-	claswp.f
-	dgeqr2.f
-	dlaln2.f
-	dlarfx.f
-	dorm2r.f
-	lsame.f
-	slacpy.f
-	slanv2.f
-	slascl.f
-	strexc.f
-	zlacgv.f
-	zlaset.f
-	cladiv.f
-	clatrs.f
-	dgttrf.f
-	dlamch.f
-	dlarnd.f
-	dpttrf.f
-	lsamen.f
-	sladiv.f
-	slaptm.f
-	slaset.f
-	strsen.f
-	zlacon.f
-	zlassq.f
-	clahqr.f
-	cmach.f
-	dgttrs.f
-	dlange.f
-	dlarnv.f
-	dpttrs.f
-	slae2.f
-	slapy2.f
-	slasr.f
-	strsyl.f
-	zlacpy.f
-	zlaswp.f
-	clange.f
-	crot.f
-	dlabad.f
-	dlanhs.f
-	dlartg.f
-	dsteqr.f
-	scsum1.f
-	slaev2.f
-	slapy3.f
-	slasrt.f
-	xerbla.f
-	zladiv.f
-	zlatrs.f)
-
-    prefixlist(arpacklapack_STAT_SRCS "${arpacklapack_DIR}")
+    file(GLOB arpacklapack_STAT_SRCS LAPACK/*.f)
 endif()
-
-set(arpackutil_STAT_SRCS
-    icnteq.f
-    icopy.f
-    iset.f
-    iswap.f
-    ivout.f
-    svout.f
-    smout.f
-    dvout.f
-    dmout.f
-    cvout.f
-    cmout.f
-    zvout.f
-    zmout.f)
-
-prefixlist(arpackutil_STAT_SRCS "${arpackutil_DIR}")
-
-set(arpacksrc_STAT_SRCS
-    sgetv0.f
-    slaqrb.f
-    sstqrb.f
-    ssortc.f
-    ssortr.f
-    sstatn.f
-    sstats.f
-    snaitr.f
-    snapps.f
-    snaup2.f
-    snaupd.f
-    snconv.f
-    sneigh.f
-    sngets.f
-    ssaitr.f
-    ssapps.f
-    ssaup2.f
-    ssaupd.f
-    ssconv.f
-    sseigt.f
-    ssgets.f
-    sneupd.f
-    sseupd.f
-    ssesrt.f
-    dgetv0.f
-    dlaqrb.f
-    dstqrb.f
-    dsortc.f
-    dsortr.f
-    dstatn.f
-    dstats.f
-    dnaitr.f
-    dnapps.f
-    dnaup2.f
-    dnaupd.f
-    dnconv.f
-    dneigh.f
-    dngets.f
-    dsaitr.f
-    dsapps.f
-    dsaup2.f
-    dsaupd.f
-    dsconv.f
-    dseigt.f
-    dsgets.f
-    dneupd.f
-    dseupd.f
-    dsesrt.f
-    cnaitr.f
-    cnapps.f
-    cnaup2.f
-    cnaupd.f
-    cneigh.f
-    cneupd.f
-    cngets.f
-    cgetv0.f
-    csortc.f
-    cstatn.f
-    znaitr.f
-    znapps.f
-    znaup2.f
-    znaupd.f
-    zneigh.f
-    zneupd.f
-    zngets.f
-    zgetv0.f
-    zsortc.f
-    zstatn.f)
-
-prefixlist(arpacksrc_STAT_SRCS "${arpacksrc_DIR}")
+file(GLOB arpackutil_STAT_SRCS UTIL/*.f)
+file(GLOB arpacksrc_STAT_SRCS SRC/*.f)
 
 if (MPI)
-    set(parpackutil_STAT_SRCS
-        pcmout.f
-	pcvout.f
-	pdmout.f
-	pdvout.f
-	pivout.f
-	psmout.f
-	psvout.f
-	pzmout.f
-	pzvout.f)
-
-    prefixlist(parpackutil_STAT_SRCS "${parpackutil_DIR}")
-
-    set(parpacksrc_STAT_SRCS
-        debug.h
-	pcgetv0.f
-	pclarnv.f
-	pcnaitr.f
-	pcnapps.f
-	pcnaup2.f
-	pcnaupd.f
-	pcneigh.f
-	pcneupd.f
-	pcngets.f
-	pdgetv0.f
-	pdlamch.f
-	pdlarnv.f
-	pdnaitr.f
-	pdnapps.f
-	pdnaup2.f
-	pdnaupd.f
-	pdneigh.f
-	pdneupd.f
-	pdngets.f
-	pdnorm2.f
-	pdsaitr.f
-	pdsapps.f
-	pdsaup2.f
-	pdsaupd.f
-	pdseigt.f
-	pdseupd.f
-	pdsgets.f
-	pdznorm2.f
-	pscnorm2.f
-	psgetv0.f
-	pslamch.f
-	pslarnv.f
-	psnaitr.f
-	psnapps.f
-	psnaup2.f
-	psnaupd.f
-	psneigh.f
-	psneupd.f
-	psngets.f
-	psnorm2.f
-	pssaitr.f
-	pssapps.f
-	pssaup2.f
-	pssaupd.f
-	psseigt.f
-	psseupd.f
-	pssgets.f
-	pzgetv0.f
-	pzlarnv.f
-	pznaitr.f
-	pznapps.f
-	pznaup2.f
-	pznaupd.f
-	pzneigh.f
-	pzneupd.f
-	pzngets.f
-	stat.h)
-
-    prefixlist(parpacksrc_STAT_SRCS "${parpacksrc_DIR}")
+    file(GLOB parpackutil_STAT_SRCS PARPACK/UTIL/*.f)
+    file(GLOB parpacksrc_STAT_SRCS PARPACK/SRC/*.f)
 endif()
 
 add_library(arpack SHARED
-		   ${arpackblas_STAT_SRCS}
-    		   ${arpacklapack_STAT_SRCS}
-		   ${arpackutil_STAT_SRCS}
-		   ${arpacksrc_STAT_SRCS})
+                   ${arpackblas_STAT_SRCS}
+                   ${arpacklapack_STAT_SRCS}
+                   ${arpackutil_STAT_SRCS}
+                   ${arpacksrc_STAT_SRCS})
 
-if (SYSTEM_BLAS)
-    target_link_libraries(arpack ${BLAS_LIBRARIES})
-endif()
-
-if (SYSTEM_LAPACK)
-    target_link_libraries(arpack ${LAPACK_LIBRARIES})
-endif()
-
+target_link_libraries(arpack ${BLAS_LIBRARIES})
+target_link_libraries(arpack ${LAPACK_LIBRARIES})
 set_target_properties(arpack PROPERTIES OUTPUT_NAME arpack)
 
 if (MPI)
     add_library(parpack SHARED
-		   	${parpacksrc_STAT_SRCS}
-		   	${parpackutil_STAT_SRCS})
+                        ${parpacksrc_STAT_SRCS}
+                        ${parpackutil_STAT_SRCS})
+
+    target_link_libraries(parpack ${MPI_Fortran_LIBRARIES})
     set_target_properties(parpack PROPERTIES OUTPUT_NAME parpack)
 endif ()
+
+############################
+# EXAMPLES
+############################
+if (EXAMPLES)
+    ############################
+    # EXAMPLES/BAND
+    ############################
+    set(arpackexample_DIR ${arpack_SOURCE_DIR}/EXAMPLES/BAND/)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/EXAMPLES/BAND/)
+
+    set(examples_EXTRA_SRCS ${arpackexample_DIR}/cnband.f)
+    set(examples_STAT_SRCS
+        cnbdr1.f
+        cnbdr2.f
+        cnbdr3.f
+        cnbdr4.f)
+    examples(examples_STAT_SRCS)
+
+    set(examples_EXTRA_SRCS ${arpackexample_DIR}/dnband.f)
+    set(examples_STAT_SRCS
+        dnbdr1.f
+        dnbdr2.f
+        dnbdr3.f
+        dnbdr4.f
+        dnbdr5.f
+        dnbdr6.f)
+    examples(examples_STAT_SRCS)
+
+    set(examples_EXTRA_SRCS ${arpackexample_DIR}/dsband.f)
+    set(examples_STAT_SRCS
+        dsbdr1.f
+        dsbdr2.f
+        dsbdr3.f
+        dsbdr4.f
+        dsbdr5.f
+        dsbdr6.f)
+    examples(examples_STAT_SRCS)
+
+    set(examples_EXTRA_SRCS ${arpackexample_DIR}/snband.f)
+    set(examples_STAT_SRCS
+        snbdr1.f
+        snbdr2.f
+        snbdr3.f
+        snbdr4.f
+        snbdr5.f
+        snbdr6.f)
+    examples(examples_STAT_SRCS)
+
+    set(examples_EXTRA_SRCS ${arpackexample_DIR}/ssband.f)
+    set(examples_STAT_SRCS
+        ssbdr1.f
+        ssbdr2.f
+        ssbdr3.f
+        ssbdr4.f
+        ssbdr5.f
+        ssbdr6.f)
+    examples(examples_STAT_SRCS)
+
+    set(examples_EXTRA_SRCS ${arpackexample_DIR}/znband.f)
+    set(examples_STAT_SRCS
+        znbdr1.f
+        znbdr2.f
+        znbdr3.f
+        znbdr4.f)
+    examples(examples_STAT_SRCS)
+    set(examples_EXTRA_SRCS)
+
+    ############################
+    # EXAMPLES/COMPLEX
+    ############################
+    set(arpackexample_DIR ${arpack_SOURCE_DIR}/EXAMPLES/COMPLEX/)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/EXAMPLES/COMPLEX/)
+
+    set(examples_STAT_SRCS
+        cndrv1.f
+        cndrv2.f
+        cndrv3.f
+        cndrv4.f
+        zndrv1.f
+        zndrv2.f
+        zndrv3.f
+        zndrv4.f)
+    examples(examples_STAT_SRCS)
+
+    ############################
+    # EXAMPLES/NONSYM
+    ############################
+    set(arpackexample_DIR ${arpack_SOURCE_DIR}/EXAMPLES/NONSYM/)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/EXAMPLES/NONSYM/)
+
+    set(examples_STAT_SRCS
+        dndrv1.f
+        dndrv2.f
+        dndrv3.f
+        dndrv4.f
+        dndrv5.f
+        dndrv6.f
+        sndrv1.f
+        sndrv2.f
+        sndrv3.f
+        sndrv4.f
+        sndrv5.f
+        sndrv6.f)
+    examples(examples_STAT_SRCS)
+
+    ############################
+    # EXAMPLES/SIMPLE
+    ############################
+    set(arpackexample_DIR ${arpack_SOURCE_DIR}/EXAMPLES/SIMPLE/)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/EXAMPLES/SIMPLE/)
+
+    set(examples_STAT_SRCS
+        cnsimp.f
+	dnsimp.f
+	dssimp.f
+	snsimp.f
+	sssimp.f
+	znsimp.f)
+
+    examples(examples_STAT_SRCS)
+
+    ############################
+    # EXAMPLES/SVD
+    ############################
+    set(arpackexample_DIR ${arpack_SOURCE_DIR}/EXAMPLES/SVD/)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/EXAMPLES/SVD/)
+
+    set(examples_STAT_SRCS
+	ssvd.f)
+
+    examples(examples_STAT_SRCS)
+
+    ############################
+    # EXAMPLES/SYM
+    ############################
+    set(arpackexample_DIR ${arpack_SOURCE_DIR}/EXAMPLES/SYM/)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/EXAMPLES/SYM/)
+
+    set(examples_STAT_SRCS
+        dsdrv1.f
+	dsdrv2.f
+	dsdrv3.f
+	dsdrv4.f
+	dsdrv5.f
+	dsdrv6.f
+	ssdrv1.f
+	ssdrv2.f
+	ssdrv3.f
+	ssdrv4.f
+	ssdrv5.f
+	ssdrv6.f)
+
+    examples(examples_STAT_SRCS)
+
+    ############################
+    # PARPACK/EXAMPLES
+    ############################
+    if (MPI)
+        set(parpackexample_DIR ${arpack_SOURCE_DIR}/PARPACK/EXAMPLES/)
+        set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/EXAMPLES/PARPACK)
+
+        set(pexamples_STAT_SRCS
+            pcndrv1.f
+            pdndrv1.f
+            pdndrv3.f
+            pdsdrv1.f
+            psndrv1.f
+            psndrv3.f
+            pssdrv1.f
+            pzndrv1.f)
+
+        pexamples(pexamples_STAT_SRCS)
+    endif()
+endif()
