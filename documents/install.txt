@@ -17,6 +17,10 @@ make
 The following compilation additionally are avaible,
 
 -DMPI=ON            "Enable parallel support (default=OFF)"
--DSYSTEM_BLAS=ON    "Use system BLAS (default=OFF)"
--DSYSTEM_LAPACK=ON  "Use system LAPACK (default=OFF)"
+-DSYSTEM_BLAS=ON    "Use system BLAS (default=ON)"
+-DSYSTEM_LAPACK=ON  "Use system LAPACK (default=ON)"
 -DEXAMPLES=ON       "Compile ARPACK examples (default=OFF)"
+
+To explicitly link BLAS and LAPACK the flags could be used:
+-DBLAS_LIBRARIES:FILEPATH=/usr/lib/libblas.so
+-DLAPACK_LIBRARIES:FILEPATH=/usr/lib/liblapack.so
