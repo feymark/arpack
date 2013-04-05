@@ -200,11 +200,11 @@ if (EXAMPLES)
 
     set(examples_STAT_SRCS
         cnsimp.f
-	dnsimp.f
-	dssimp.f
-	snsimp.f
-	sssimp.f
-	znsimp.f)
+        dnsimp.f
+        dssimp.f
+        snsimp.f
+        sssimp.f
+        znsimp.f)
 
     examples(examples_STAT_SRCS)
 
@@ -215,7 +215,7 @@ if (EXAMPLES)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/EXAMPLES/SVD/)
 
     set(examples_STAT_SRCS
-	ssvd.f)
+        ssvd.f)
 
     examples(examples_STAT_SRCS)
 
@@ -227,17 +227,17 @@ if (EXAMPLES)
 
     set(examples_STAT_SRCS
         dsdrv1.f
-	dsdrv2.f
-	dsdrv3.f
-	dsdrv4.f
-	dsdrv5.f
-	dsdrv6.f
-	ssdrv1.f
-	ssdrv2.f
-	ssdrv3.f
-	ssdrv4.f
-	ssdrv5.f
-	ssdrv6.f)
+        dsdrv2.f
+        dsdrv3.f
+        dsdrv4.f
+        dsdrv5.f
+        dsdrv6.f
+        ssdrv1.f
+        ssdrv2.f
+        ssdrv3.f
+        ssdrv4.f
+        ssdrv5.f
+        ssdrv6.f)
 
     examples(examples_STAT_SRCS)
 
