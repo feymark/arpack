@@ -16,3 +16,7 @@
   ---------
   File that explains the different printing options of the
   Arnoldi update iteration codes within ARPACK.
+
+  install.txt
+  ---------
+  File that explains the installation procedure.

@@ -50,22 +50,22 @@ if (SYSTEM_LAPACK)
 endif()
 
 if (MPI)
-    set(parpackutil_DIR ${arpack_SOURCE_DIR}/PARPACK/UTIL/)
-    set(parpacksrc_DIR ${arpack_SOURCE_DIR}/PARPACK/SRC/)
+    set(parpackutil_DIR ${arpack_SOURCE_DIR}/parpack/util/)
+    set(parpacksrc_DIR ${arpack_SOURCE_DIR}/parpack/src/)
 endif()
 
 if (NOT SYSTEM_BLAS)
-    file(GLOB arpackblas_STAT_SRCS BLAS/*.f)
+    file(GLOB arpackblas_STAT_SRCS blas/*.f)
 endif()
 if (NOT SYSTEM_LAPACK)
-    file(GLOB arpacklapack_STAT_SRCS LAPACK/*.f)
+    file(GLOB arpacklapack_STAT_SRCS lapack/*.f)
 endif()
-file(GLOB arpackutil_STAT_SRCS UTIL/*.f)
-file(GLOB arpacksrc_STAT_SRCS SRC/*.f)
+file(GLOB arpackutil_STAT_SRCS util/*.f)
+file(GLOB arpacksrc_STAT_SRCS src/*.f)
 
 if (MPI)
-    file(GLOB parpackutil_STAT_SRCS PARPACK/UTIL/*.f)
-    file(GLOB parpacksrc_STAT_SRCS PARPACK/SRC/*.f)
+    file(GLOB parpackutil_STAT_SRCS parpack/util/*.f)
+    file(GLOB parpacksrc_STAT_SRCS parpack/src/*.f)
 endif()
 
 add_library(arpack SHARED
@@ -94,8 +94,8 @@ if (EXAMPLES)
     ############################
     # EXAMPLES/BAND
     ############################
-    set(arpackexample_DIR ${arpack_SOURCE_DIR}/EXAMPLES/BAND/)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/EXAMPLES/BAND/)
+    set(arpackexample_DIR ${arpack_SOURCE_DIR}/examples/band/)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/examples/band/)
 
     set(examples_EXTRA_SRCS ${arpackexample_DIR}/cnband.f)
     set(examples_STAT_SRCS
@@ -157,8 +157,8 @@ if (EXAMPLES)
     ############################
     # EXAMPLES/COMPLEX
     ############################
-    set(arpackexample_DIR ${arpack_SOURCE_DIR}/EXAMPLES/COMPLEX/)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/EXAMPLES/COMPLEX/)
+    set(arpackexample_DIR ${arpack_SOURCE_DIR}/examples/complex/)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/examples/complex/)
 
     set(examples_STAT_SRCS
         cndrv1.f
@@ -172,10 +172,10 @@ if (EXAMPLES)
     examples(examples_STAT_SRCS)
 
     ############################
-    # EXAMPLES/NONSYM
+    # examples/nonsym
     ############################
-    set(arpackexample_DIR ${arpack_SOURCE_DIR}/EXAMPLES/NONSYM/)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/EXAMPLES/NONSYM/)
+    set(arpackexample_DIR ${arpack_SOURCE_DIR}/examples/nonsym/)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/examples/nonsym/)
 
     set(examples_STAT_SRCS
         dndrv1.f
@@ -193,10 +193,10 @@ if (EXAMPLES)
     examples(examples_STAT_SRCS)
 
     ############################
-    # EXAMPLES/SIMPLE
+    # examples/SIMPLE
     ############################
-    set(arpackexample_DIR ${arpack_SOURCE_DIR}/EXAMPLES/SIMPLE/)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/EXAMPLES/SIMPLE/)
+    set(arpackexample_DIR ${arpack_SOURCE_DIR}/examples/simple/)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/examples/simple/)
 
     set(examples_STAT_SRCS
         cnsimp.f
@@ -209,10 +209,10 @@ if (EXAMPLES)
     examples(examples_STAT_SRCS)
 
     ############################
-    # EXAMPLES/SVD
+    # examples/svd
     ############################
-    set(arpackexample_DIR ${arpack_SOURCE_DIR}/EXAMPLES/SVD/)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/EXAMPLES/SVD/)
+    set(arpackexample_DIR ${arpack_SOURCE_DIR}/examples/svd/)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/examples/svd/)
 
     set(examples_STAT_SRCS
         ssvd.f)
@@ -220,10 +220,10 @@ if (EXAMPLES)
     examples(examples_STAT_SRCS)
 
     ############################
-    # EXAMPLES/SYM
+    # examples/sym
     ############################
-    set(arpackexample_DIR ${arpack_SOURCE_DIR}/EXAMPLES/SYM/)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/EXAMPLES/SYM/)
+    set(arpackexample_DIR ${arpack_SOURCE_DIR}/examples/sym/)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/examples/sym/)
 
     set(examples_STAT_SRCS
         dsdrv1.f
@@ -242,11 +242,11 @@ if (EXAMPLES)
     examples(examples_STAT_SRCS)
 
     ############################
-    # PARPACK/EXAMPLES
+    # parpack/examples
     ############################
     if (MPI)
-        set(parpackexample_DIR ${arpack_SOURCE_DIR}/PARPACK/EXAMPLES/)
-        set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/EXAMPLES/PARPACK)
+        set(parpackexample_DIR ${arpack_SOURCE_DIR}/parpack/examples/)
+        set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/examples/parpack)
 
         set(pexamples_STAT_SRCS
             pcndrv1.f
