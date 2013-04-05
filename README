@@ -1,4 +1,4 @@
-1. You have successfully unbundled ARPACK and are now in the ARPACK 
+1. You have successfully unbundled ARPACK and are now in the ARPACK
    directory that was created for you.
 
 2. Upon executing the 'ls | more ' command you should see
@@ -17,7 +17,7 @@
 
       BLAS, DOCUMENTS, EXAMPLES, LAPACK, SRC, UTIL, PARPACK
 
-   The directory SRC contains the top level routines including 
+   The directory SRC contains the top level routines including
    the highest level reverse communication interface routines
 
       ssaupd, dsaupd - symmetric single and double precision
@@ -28,7 +28,6 @@
    sequence and usage.  Additional information is in the DOCUMENTS directory.
 
    The directory PARPACK contains the Parallel ARPACK routines.
-     
 
 3. Example driver programs that illustrate all the computational modes,
    data types and precisions may be found in the EXAMPLES directory.
@@ -47,23 +46,21 @@
    BAND, COMPLEX, NONSYM, SYM, SVD respectively.  Look at the README
    file for further information.  To get started, get into the SIMPLE
    directory to see example programs that illustrate the use of ARPACK in
-   the simplest modes of operation for the most commonly posed 
-   standard eigenvalue problems.  
-
+   the simplest modes of operation for the most commonly posed
+   standard eigenvalue problems.
 
    Example programs for Parallel ARPACK may be found in the directory
    PARPACK/EXAMPLES. Look at the README file for further information.
 
-4. Within DOCUMENTS directory there are three files 
+4. Within DOCUMENTS directory there are three files
 
-   ex-sym.doc 
-   ex-nonsym.doc and
+   ex-sym.doc
+   ex-nonsym.doc
    ex-complex.doc
 
    for templates on how to invoke the computational modes of ARPACK.
-   Also look in the README file for explanations concerning the 
+   Also look in the README file for explanations concerning the
    other documents.
-
 
    Danny Sorensen   at  sorensen@caam.rice.edu
    Richard Lehoucq  at  rblehou@sandia.gov
@@ -71,4 +68,3 @@
    Kristi Maschhoff at  kristyn@tera.com
 
  Good luck and enjoy.
-

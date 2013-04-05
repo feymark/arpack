@@ -22,7 +22,7 @@ c========================================================
 c===  Common to both symmetric and nonsymmetric code  ===
 c========================================================
 c
-c  tgetv0 = total time spent in generating starting vector and 
+c  tgetv0 = total time spent in generating starting vector and
 c           restarted vector for the Arnoldi sequence.
 c  titref = total time spent in iterative refinement phase in SSAITR.
 c  trvec  = total time spent in computing the Ritz vectors before exit.

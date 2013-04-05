@@ -1,5 +1,5 @@
 c-----------------------------------------------------------------------
-c        
+c
 c\Example-1
 c     ... Suppose want to solve A*x = lambda*x in regular mode
 c     ... so OP = A  and  B = I.
@@ -13,8 +13,8 @@ c     %------------------------------------%
 c     | Beginning of reverse communication |
 c     %------------------------------------%
 c 10  continue
-c     call _naupd ( ido, 'I', n, which, nev, tol, resid, ncv, v, ldv,
-c    &              iparam, ipntr, workd, workl, lworkl, info )
+c     call _saupd ( ido, 'I', n, which, nev, tol, resid, ncv, v, ldv, iparam,
+c    &              ipntr, workd, workl, lworkl, info )
 c     if (ido .eq. -1 .or. ido .eq. 1) then
 c        call matvecA (n, workd(ipntr(1)), workd(ipntr(2)))
 c        go to 10
@@ -23,31 +23,30 @@ c     %------------------------------%
 c     | End of Reverse communication |
 c     %------------------------------%
 c
-c     ... call _neupd to postprocess
+c     ... Call _seupd to postprocess
 c     ... want the Ritz vectors set rvec = .true. else rvec = .false.
-c         call _neupd ( rvec, 'All', select, d, d(1,2), v, ldv,
-c    &          sigmar, sigmai, workev, bmat, n, which, nev, tol,
-c    &          resid, ncv, v, ldv, iparam, ipntr, workd, workl,
-c    &          lworkl, info )
+c     call _seupd ( rvec, 'All', select, d, z, ldz, sigma, bmat,
+c    &              n, which, nev, tol, resid, ncv, v, ldv, iparam,
+c    &              ipntr, workd, workl, lworkl, info )
+c
 c     stop
-c     end 
+c     end
 c
 c\Example-2
 c     ... Suppose want to solve A*x = lambda*x in shift-invert mode
-c     ... so OP = inv[A - sigma*I] and B = I, sigma has zero 
-c     ... imaginary part
+c     ... so OP = inv[A - sigma*I]  and  B = I.
 c     ... Assume "call solve(n,rhs,x)" solves [A - sigma*I]*x = rhs
 c     ... Assume exact shifts are used
 c     ...
 c     ido = 0
-c     iaparam(7) = 3
+c     iparam(7) = 3
 c
 c     %------------------------------------%
 c     | Beginning of reverse communication |
 c     %------------------------------------%
 c 10  continue
-c     call _naupd ( ido, 'I', n, which, nev, tol, resid, ncv, v, ldv, 
-c    &              iparam, ipntr, workd, workl, lworkl, info )
+c     call _saupd ( ido, 'I', n, which, nev, tol, resid, ncv, v, ldv, iparam,
+c    &              ipntr, workd, workl, lworkl, info )
 c     if (ido .eq. -1 .or. ido .eq. 1) then
 c        call solve (n, workd(ipntr(1)), workd(ipntr(2)))
 c        go to 10
@@ -56,14 +55,11 @@ c     %------------------------------%
 c     | End of Reverse communication |
 c     %------------------------------%
 c
-c     ... call _neupd to postprocess
+c     ... Call _seupd to postprocess
 c     ... want the Ritz vectors set rvec = .true. else rvec = .false.
-c         call _neupd ( rvec, 'All', select, d, d(1,2), v, ldv,
-c    &          sigmar, sigmai, workev, bmat, n, which, nev, tol,
-c    &          resid, ncv, v, ldv, iparam, ipntr, workd, workl,
-c    &          lworkl, info )
-c     stop
-c     end 
+c     call _seupd ( rvec, 'All', select, d, z, ldz, sigma, bmat,
+c    &              n, which, nev, tol, resid, ncv, v, ldv, iparam,
+c    &              ipntr, workd, workl, lworkl, info )
 c
 c\Example-3
 c     ... Suppose want to solve A*x = lambda*M*x in regular mode
@@ -80,10 +76,11 @@ c     %------------------------------------%
 c     | Beginning of reverse communication |
 c     %------------------------------------%
 c 10  continue
-c     call _naupd ( ido, 'G', n, which, nev, tol, resid, ncv, v, ldv, 
-c    &              iparam, ipntr, workd, workl, lworkl, info )
+c     call _saupd ( ido, 'G', n, which, nev, tol, resid, ncv, v, ldv, iparam,
+c    &              ipntr, workd, workl, lworkl, info )
 c     if (ido .eq. -1 .or. ido .eq. 1) then
 c        call matvecA (n, workd(ipntr(1)), temp_array)
+c        call _scopy (n, temp_array, 1, workd(ipntr(1)), 1)
 c        call solveM  (n, temp_array, workd(ipntr(2)))
 c        go to 10
 c     else if (ido .eq. 2) then
@@ -92,29 +89,26 @@ c        go to 10
 c
 c     ... delete this last conditional if want to use exact shifts
 c     else if (ido .eq. 3) then
-c        ... compute shifts and put in workl starting from the position
-c        ... pointed by ipntr(14).
+c        ... compute shifts and put in the first np locations of work
 c        np = iparam(8)
-c        call scopy (np, shifts, 1, workl(ipntr(14), 1)
+c        call _copy (np, shifts, 1, workl(ipntr(11), 1)
 c        go to 10
 c     end if
 c     %------------------------------%
 c     | End of Reverse communication |
 c     %------------------------------%
 c
-c     ... call _neupd to postprocess
+c     ... call _seupd to postprocess
 c     ... want the Ritz vectors set rvec = .true. else rvec = .false.
-c         call _neupd ( rvec, 'All', select, d, d(1,2), v, ldv,
-c    &          sigmar, sigmai, workev, bmat, n, which, nev, tol,
-c    &          resid, ncv, v, ldv, iparam, ipntr, workd, workl,
-c    &          lworkl, info )
+c     call _seupd ( rvec, 'All', select, d, z, ldz, sigma, bmat,
+c    &              n, which, nev, tol, resid, ncv, v, ldv, iparam,
+c    &              ipntr, workd, workl, lworkl, info )
 c     stop
 c     end
 c
 c\Example-4
 c     ... Suppose want to solve A*x = lambda*M*x in shift-invert mode
-c     ... so OP = inv[A - sigma*M]*M and B = M, sigma has zero 
-c     ... imaginary part
+c     ... so OP = (inv[A - sigma*M])*M  and  B = M.
 c     ... Assume "call matvecM(n,x,y)" computes y = M*x
 c     ... Assume "call solve(n,rhs,x)" solves [A - sigma*M]*x = rhs
 c     ... Assume exact shifts are used
@@ -126,8 +120,8 @@ c     %------------------------------------%
 c     | Beginning of reverse communication |
 c     %------------------------------------%
 c 10  continue
-c     call _naupd ( ido, 'G', n, which, nev, tol, resid, ncv, v, ldv, 
-c    &              iparam, ipntr, workd, workl, lworkl, info )
+c     call _saupd ( ido, 'G', n, which, nev, tol, resid, ncv, v, ldv, iparam,
+c    &              ipntr, workd, workl, lworkl, info )
 c     if (ido .eq. -1) then
 c        call matvecM (n, workd(ipntr(1)), temp_array)
 c        call solve (n, temp_array, workd(ipntr(2)))
@@ -138,119 +132,103 @@ c        go to 10
 c     else if (ido .eq. 2) then
 c        call matvecM (n, workd(ipntr(1)), workd(ipntr(2)))
 c        go to 10
-c     end if 
-c     %------------------------------%
-c     | End of Reverse communication |
-c     %------------------------------%
-c
-c     ... call _neupd to postprocess
-c     ... want the Ritz vectors set rvec = .true. else rvec = .false.
-c         call _neupd ( rvec, 'All', select, d, d(1,2), v, ldv,
-c    &          sigmar, sigmai, workev, bmat, n, which, nev, tol,
-c    &          resid, ncv, v, ldv, iparam, ipntr, workd, workl,
-c    &          lworkl, info )
-c     stop
-c     end 
-c
-c\Example-5
-c     ... Suppose want to solve A*x = lambda*M*x in shift-invert mode
-c     ... So OP = Real_Part{inv[A-SIGMA*M]*M and B=M, sigma has 
-c     ... nonzero imaginary part
-c     ... Assume "call matvecM(n,x,y)" computes y = M*x
-c     ... Assume "call solve(n,rhs,x)" solves [A - sigma*M]*x = rhs
-c     ... in complex  arithmetic
-c     ... Assume exact shifts are used
-c     ...
-c     ido = 0
-c     iparam(7) = 3
-c
-c     %------------------------------------%
-c     | Beginning of reverse communication |
-c     %------------------------------------%
-c 10  continue
-c     call _naupd ( ido, 'G', n, which, nev, tol, resid, ncv, v, ldv,
-c    &              iparam, ipntr, workd, workl, lworkl, info )
-c     if (ido .eq. -1) then
-c        call matvecM (n, workd(ipntr(1)), temp_array)
-c        call solve(n, temp_array, complex_array)
-c        do i = 1, n
-c           workd(ipntr(2)+i-1) = real(complex_array(i))
-c        end do
-c        go to 10
-c     else if (ido .eq. 1) then
-c        call solve (n, workd(ipntr(3)), complex_array)
-c        do i = 1, n
-c           workd(ipntr(2)+i-1) = real(complex_array(i))
-c        end do
-c        go to 10
-c     else if (ido .eq. 2) then
-c        call matvecM (n, workd(ipntr(1)), workd(ipntr(2)))
-c        go to 10
 c     end if
 c     %------------------------------%
 c     | End of Reverse communication |
 c     %------------------------------%
 c
-c     ... call _neupd to postprocess.
+c     ... call _seupd to postprocess
 c     ... want the Ritz vectors set rvec = .true. else rvec = .false.
-c         call _neupd ( rvec, 'All', select, d, d(1,2), v, ldv,
-c    &          sigmar, sigmai, workev, bmat, n, which, nev, tol,
-c    &          resid, ncv, v, ldv, iparam, ipntr, workd, workl,
-c    &          lworkl, info )
-c     ... Use Rayleigh quotient to transform d(:,1) and d(:,2)
-c         to the approximation to the original problem.
-c     stop
-c     end 
+c     call _seupd ( rvec, 'All', select, d, z, ldz, sigma, bmat,
+c    &              n, which, nev, tol, resid, ncv, v, ldv, iparam,
+c    &              ipntr, workd, workl, lworkl, info )
 c
-c\Example-6
-c     ... Suppose want to solve A*x = lambda*M*x in shift-invert mode
-c     ... So OP = Imaginary_Part{inv[A-SIGMA*M]*M and B=M, sigma must
-c     ... have nonzero imaginary part
-c     ... Assume "call matvecM(n,x,y)" computes y = M*x
-c     ... Assume "call solve(n,rhs,x)" solves [A - sigma*M]*x = rhs
-c     ... in complex  arithmetic
-c     ... Assume exact shifts are used
-c     ...
-c     ido = 0
-c     iparam(7) = 3
-c
-c     %------------------------------------%
-c     | Beginning of reverse communication |
-c     %------------------------------------%
-c 10  continue
-c     call _naupd ( ido, 'G', n, which, nev, tol, resid, ncv, v, ldv,
-c    &              iparam, ipntr, workd, workl, lworkl, info )
-c     if (ido .eq. -1) then
-c        call matvecM (n, workd(ipntr(1)), temp_array)
-c        call solve(n, temp_array, complex_array)
-c        do i = 1, n
-c           workd(ipntr(2)+i-1) = aimag(complex_array(i))
-c        end do
-c        go to 10
-c     else if (ido .eq. 1) then
-c        call solve (n, workd(ipntr(3)), complex_array)
-c        do i = 1, n
-c           workd(ipntr(2)+i-1) = aimag(complex_array(i))
-c        end do
-c        go to 10
-c     else if (ido .eq. 2) then
-c        call matvecM (n, workd(ipntr(1)), workd(ipntr(2)))
-c        go to 10
-c     end if
-c     %------------------------------%
-c     | End of Reverse communication |
-c     %------------------------------%
-c
-c     ... call _neupd to postprocess
-c     ... want the Ritz vectors set rvec = .true. else rvec = .false.
-c         call _neupd ( rvec, 'All', select, d, d(1,2), v, ldv,
-c    &          sigmar, sigmai, workev, bmat, n, which, nev, tol,
-c    &          resid, ncv, v, ldv, iparam, ipntr, workd, workl,
-c    &          lworkl, info )
-c     ... Use Rayleigh quotient to transform d(:,1) and d(:,2)
-c         to the Ritz approximation to the original problem.
 c     stop
 c     end
-c        
+c
+c\Example-5
+c     ... Suppose want to solve K*x = lambda*KG*x in Buckling mode
+c     ... so OP = (inv[K - sigma*KG])*K  and  B = K.
+c     ... Assume "call matvecM(n,x,y)" computes y = KG*x
+c     ... Assume "call matvecA(n,x,y)" computes y = K*x
+c     ... Assume "call solve(n,rhs,x)" solves [K - sigma*KG]*x = rhs
+c     ... Assume exact shifts are used
+c
+c     ido = 0
+c     iparam(7) = 4
+c
+c     %------------------------------------%
+c     | Beginning of reverse communication |
+c     %------------------------------------%
+c 10  continue
+c     call _saupd ( ido, 'G', n, which, nev, tol, resid, ncv, v, ldv, iparam,
+c    &              ipntr, workd, workl, lworkl, info )
+c     if (ido .eq. -1) then
+c        call matvecA (n, workd(ipntr(1)), temp_array)
+c        solve (n, temp_array, workd(ipntr(2)))
+c        go to 10
+c     else if (ido .eq. 1) then
+c        call solve (n, workd(ipntr(3)), workd(ipntr(2)))
+c        go to 10
+c     else if (ido .eq. 2) then
+c        call matvecA (n, workd(ipntr(1)), workd(ipntr(2)))
+c        go to 10
+c     end if
+c     %------------------------------%
+c     | End of Reverse communication |
+c     %------------------------------%
+c
+c     ... call _seupd to postprocess
+c     ... want the Ritz vectors set rvec = .true. else rvec = .false.
+c     call _seupd ( rvec, 'All', select, d, z, ldz, sigma, bmat,
+c    &              n, which, nev, tol, resid, ncv, v, ldv, iparam,
+c    &              ipntr, workd, workl, lworkl, info )
+c     stop
+c     end
+c
+c\Example-6
+c     ... Suppose want to solve A*x = lambda*M*x in Cayley mode
+c     ... so OP = inv[A - sigma*M]*[A + sigma*M]  and  B = M.
+c     ... Assume "call matvecM(n,x,y)" computes y = M*x
+c     ... Assume "call matvecA(n,x,y)" computes y = A*x
+c     ... Assume "call solve(n,rhs,x)" solves [A - sigma*M]*x = rhs
+c     ... Assume exact shifts are used
+c     ...
+c     ido = 0
+c     iparam(7) = 5
+c
+c     %------------------------------------%
+c     | Beginning of reverse communication |
+c     %------------------------------------%
+c 10  continue
+c     call _saupd ( ido, 'G', n, which, nev, tol, resid, ncv, v, ldv, iparam,
+c    &              ipntr, workd, workl, lworkl, info )
+c     if (ido .eq. -1) then
+c        call matvecM (n, workd(ipntr(1)), workd(ipntr(2)))
+c        call matvecA (n, workd(ipntr(1)), temp_array)
+c        call _axpy (n, sigma, workd(inptr(2)), 1, temp_array, 1)
+c        call solve (n, temp_array, workd(ipntr(2)))
+c        go to 10
+c     else if (ido .eq. 1) then
+c        call matvecA (n, workd(ipntr(1)), workd(ipntr(2)))
+c        call _axpy (n, sigma, workd(inptr(3)), 1, workd(ipntr(2)), 1)
+c        call _copy (n, workd(inptr(2)), 1, workd(ipntr(3)), 1)
+c        call solve (n, workd(ipntr(3)), workd(ipntr(2)))
+c        go to 10
+c     else if (ido .eq. 2) then
+c        call matvecM (n, workd(ipntr(1)), workd(ipntr(2)))
+c        go to 10
+c     end if
+c     %------------------------------%
+c     | End of Reverse communication |
+c     %------------------------------%
+c
+c     ... call _seupd to postprocess
+c     ... want the Ritz vectors set rvec = .true. else rvec = .false.
+c     call _seupd ( rvec, 'All', select, d, z, ldz, sigma, bmat,
+c    &              n, which, nev, tol, resid, ncv, v, ldv, iparam,
+c    &              ipntr, workd, workl, lworkl, info )
+c     stop
+c     end
 c\EndDoc
-
+c
