@@ -3,21 +3,21 @@
 
 2. Upon executing the 'ls | more ' command you should see
 
-      BLAS
+      blas
       CMakeLists.txt
-      DOCUMENTS
-      EXAMPLES
-      LAPACK
-      PARPACK
+      documents
+      examples
+      lapack
+      parpack
       README
-      SRC
-      UTIL
+      src
+      util
 
    The following entries are directories:
 
-      BLAS, DOCUMENTS, EXAMPLES, LAPACK, SRC, UTIL, PARPACK
+      blas, documents, examples, lapack, src, util, parpack
 
-   The directory SRC contains the top level routines including
+   The directory "src" contains the top level routines including
    the highest level reverse communication interface routines
 
       ssaupd, dsaupd - symmetric single and double precision
@@ -27,36 +27,36 @@
    The headers of these routines contain full documentation of calling
    sequence and usage.  Additional information is in the DOCUMENTS directory.
 
-   The directory PARPACK contains the Parallel ARPACK routines.
+   The directory "parpack" contains the Parallel ARPACK routines.
 
 3. Example driver programs that illustrate all the computational modes,
    data types and precisions may be found in the EXAMPLES directory.
-   Upon executing the 'ls EXAMPLES | more ' command you should see
+   Upon executing the 'ls examples | more ' command you should see
 
-      BAND
-      COMPLEX
-      NONSYM
+      band
+      complex
+      nonsym
       README
-      SIMPLE
-      SVD
-      SYM
+      simple
+      svd
+      sym
 
    Example programs for banded, complex, nonsymmetric, symmetric,
    and singular value decomposition may be found in the directories
-   BAND, COMPLEX, NONSYM, SYM, SVD respectively.  Look at the README
-   file for further information.  To get started, get into the SIMPLE
-   directory to see example programs that illustrate the use of ARPACK in
-   the simplest modes of operation for the most commonly posed
-   standard eigenvalue problems.
+   "band", "complex", "nonsym", "sym", "svd" respectively.  Look at
+   the README file for further information.  To get started, get into
+   the "simple" directory to see example programs that illustrate the
+   use of ARPACK in the simplest modes of operation for the most commonly
+   posed standard eigenvalue problems.
 
    Example programs for Parallel ARPACK may be found in the directory
-   PARPACK/EXAMPLES. Look at the README file for further information.
+   "parpack/examples". Look at the README file for further information.
 
-4. Within DOCUMENTS directory there are three files
+4. Within "documents" directory there are three files
 
-   ex-sym.doc
-   ex-nonsym.doc
-   ex-complex.doc
+   ex-sym.txt
+   ex-nonsym.txt
+   ex-complex.txt
 
    for templates on how to invoke the computational modes of ARPACK.
    Also look in the README file for explanations concerning the
